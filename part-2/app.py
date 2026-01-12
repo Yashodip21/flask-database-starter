@@ -146,7 +146,10 @@ def search_student():
         ).fetchall()
 
     conn.close()
+    
+
     return render_template('search.html', students=students)
+    
 
 
 
