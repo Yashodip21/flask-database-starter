@@ -1,1 +1,1 @@
-sqlite:///school.db
+teachers

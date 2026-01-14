@@ -40,50 +40,33 @@
         {% endif %}
     {% endwith %}
 
-    <a href="{{ url_for('add_student') }}" class="btn btn-add">+ Add New Student</a>
     <a href="{{ url_for('add_teacher') }}" class="btn btn-add">+ Add New Teacher</a>
 
+    {% if students %}
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Course</th>
+                <th>Actions</th>
+            </tr>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.id }}</td>  <!-- ORM uses dot notation! -->
+                <td>{{ student.name }}</td>
+                <td>{{ student.email }}</td>
+                <td><span class="course-badge">{{ student.course.name }}</span></td>  <!-- Access related course! -->
+                <td>
+                    <a href="{{ url_for('edit_student', id=student.id) }}" class="btn btn-edit">Edit</a>
+                    <a href="{{ url_for('delete_student', id=student.id) }}" class="btn btn-delete"
+                       onclick="return confirm('Delete this student?')">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
 
-<h2>Students</h2>
-
-{% if students %}
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Course</th>
-        <th>Actions</th>
-    </tr>
-    {% for student in students %}
-    <tr>
-        <td>{{ student.id }}</td>
-        <td>{{ student.name }}</td>
-        <td>{{ student.email }}</td>
-<td>
-    <span class="course-badge">{{ student.course.name }}</span><br>
-
-    {% for s in student.course.students %}
-    <small> {{ s.name }}</small>,
-    {% endfor %}
-</td>
-        <td>
-            <a href="{{ url_for('edit_student', id=student.id) }}" class="btn btn-edit">Edit</a>
-            <a href="{{ url_for('delete_student', id=student.id) }}" class="btn btn-delete"
-                onclick="return confirm('Delete this student?')">Delete</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-{% else %}
-<p class="empty">No students yet.</p>
-{% endif %}
-
-<br>
-<hr>
-
-<h2>Teachers</h2>
-
+        
 {% if teachers %}
 <table>
     <tr>
@@ -110,8 +93,13 @@
 {% else %}
 <p class="empty">No teachers yet.</p>
 {% endif %}
+        
+    {% else %}
+        <p class="empty">No Teacher yet. Add one!</p>
+    {% endif %}
 
 
+    
 
     <hr>
     <p><strong>Notice:</strong> We use <code>student.course.name</code> to access the related course - that's the power of ORM relationships!</p>
