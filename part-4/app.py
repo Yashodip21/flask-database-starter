@@ -34,6 +34,9 @@ class Book(db.Model):
     author = db.Column(db.String(100), nullable=False)
     year = db.Column(db.Integer)
     isbn = db.Column(db.String(20), unique=True)
+
+    author_id = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=False)
+
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):  # Convert model to dictionary for JSON response
@@ -45,6 +48,30 @@ class Book(db.Model):
             'isbn': self.isbn,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
+    
+
+class Author(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    bio = db.Column(db.String(200), nullable=False)
+    isbn = db.Column(db.String(20), unique=True)
+    city = db.Column(db.String(100), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    
+    books = db.relationship('Book', backref='author', lazy=True)
+
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'bio': self.bio,
+            'isbn': self.isbn,
+            'city': self.city,
+            'created_at': self.created_at.isoformat()
+        }
+
 
 
 # =============================================================================
@@ -59,6 +86,17 @@ def get_books():
         'success': True,
         'count': len(books),
         'books': [book.to_dict() for book in books]  # List comprehension to convert all
+    })
+
+#GET/api/author--get all author
+@app.route("/api/authors",methods=['GET'])
+def get_authors():
+    authors=Author.query.all()
+    return jsonify({
+        "success":True,
+        "count":len(authors),
+        "authors":[author.to_dict() for author in authors]
+
     })
 
 
@@ -77,6 +115,25 @@ def get_book(id):
         'success': True,
         'book': book.to_dict()
     })
+
+#GET /api/author/id -get a single author
+@app.route("/api/author/<int:id>",methods=['GET'])
+def get_author(id):
+    author=Author.query.all(id)
+
+    if not author:
+        return jsonify({
+            "success":False,
+            "error":"Author Not Found"
+        }),404
+     
+    return jsonify({
+         "success":True,
+         "author":author.to_dict()
+
+     })
+
+
 
 
 # POST /api/books - Create new book
@@ -114,6 +171,45 @@ def create_book():
         'book': new_book.to_dict()
     }), 201  # 201 = Created
 
+#POST api/authors -create new author
+@app.route("/api/authors",methods=["POST"])
+def add_author():
+    data = request.get_json()  # Get JSON data from request body
+
+    if not data:
+        return jsonify({
+            "success": False,
+            "error":"No data provided"
+        }),400
+    if not data.get("name") or not data.get("bio"):
+        return jsonify ({
+            "success":False,
+            "error":"name and bio is required"
+        }),400
+    # Check for duplicate ISBN
+    if data.get('isbn'):
+        existing = Author.query.filter_by(isbn=data['isbn']).first()
+        if existing:
+            return jsonify({'success': False, 'error': 'ISBN already exists'}), 400
+        
+    # add new author
+    new_author=Author(
+        name=data['name'],
+        bio=data['bio'],
+        city=data['city'],
+        isbn=data.get('isbn')
+    )
+    
+    db.session.add(new_author)
+    db.session.commit()
+
+    return jsonify({
+        'success': True,
+        'message': 'author created successfully',
+        'book': new_author.to_dict()
+    }), 201  # 201 = Created
+
+
 
 # PUT /api/books/<id> - Update book
 @app.route('/api/books/<int:id>', methods=['PUT'])
@@ -146,6 +242,44 @@ def update_book(id):
         'book': book.to_dict()
     })
 
+# PUT/api/authors/id -Update author
+@app.route("/api/authors/<int:id>",methods=['PUT'])
+def update_author(id):
+    author=Author.query.get(id)
+
+    if not author:
+        return jsonify({
+            "success":False,
+            "error":"author not found"
+        }),404 #Status code
+    
+    data=request.get_json()
+
+    if not data:
+        return jsonify({
+            "success":False,
+            "error":"No data provided"
+        }),400 # status code
+    
+    #update author
+    if 'name' in data:
+        author.name=data['name']
+    if 'bio' in data:
+        author.bio=data['bio']
+    if 'city' in data:
+        author.city=data['city']
+    if 'isbn' in data:
+        author.isbn = data['isbn']
+
+
+    db.session.commit()
+
+    return jsonify({
+            "success":True,
+            "message":"author update successfully",
+            "author":author.to_dict()
+        
+        })
 
 # DELETE /api/books/<id> - Delete book
 @app.route('/api/books/<int:id>', methods=['DELETE'])
@@ -162,6 +296,26 @@ def delete_book(id):
         'success': True,
         'message': 'Book deleted successfully'
     })
+
+#DELETE /api/authors/id - delete author
+@app.route("/api/authors/<int:id>", methods=["DELETE"])
+def delete_author(id):
+    author=Author.query.get(id)
+    if not author:
+        return jsonify({
+            "success":False,
+            "error":"author not found"
+        }),404
+    
+    db.session.delete(author)
+    db.session.commit()
+
+    return jsonify({
+        "success":True,
+        "message":"author deleted"
+
+    })
+
 
 
 # =============================================================================
@@ -344,8 +498,20 @@ if __name__ == '__main__':
 # EXERCISE:
 # =============================================================================
 #
-# 1. Add pagination: `/api/books?page=1&per_page=10`
-# 2. Add sorting: `/api/books?sort=title&order=desc`
-# 3. Create a simple frontend using JavaScript fetch()
+# 1. Create new class say "Author" with fields id, name, bio, city with its table. 
+# Write all CRUD api routes for it similar to Book class.
+# Additionally try to link Book and Author class such that each book has one author and one author can have multiple books.
+
+# 1. Create 2 simple frontend using JavaScript fetch()
+# This is a bigger exercise. Create a frontend in HTML and JS that uses all api routes and displays data dynamically, along with create/edit/delete functionality.
+# Since the API is through n through accessible on the computer/server, you don't need to use render_template from flask, instead, 
+# you can directly use ipaddress:portnumber/apiroute from any where. So your HTML JS code can be anywhere on computer (not necessarily in flask)  
+
+# 3. Add pagination: `/api/books?page=1&per_page=10` 
+# Hint - the sqlalchemy provides paginate method. 
+# OPTIONAL - For ease of understanding, create a new api say /api/books-with-pagination which takes page number and number of books per page
+
+# 4. Add sorting: `/api/books?sort=title&order=desc`
+# OPTIONAL - For ease of understanding, create a new api say /api/books-with-sorting
 #
 # =============================================================================
