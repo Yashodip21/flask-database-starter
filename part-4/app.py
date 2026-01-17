@@ -31,7 +31,7 @@ db = SQLAlchemy(app)
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
-    author = db.Column(db.String(100), nullable=False)
+    author_id = db.Column(db.String(100), nullable=False)
     year = db.Column(db.Integer)
     isbn = db.Column(db.String(20), unique=True)
 
@@ -443,15 +443,15 @@ def init_db():
     with app.app_context():
         db.create_all()
 
-        if Book.query.count() == 0:
-            sample_books = [
-                Book(title='Python Crash Course', author='Eric Matthes', year=2019, isbn='978-1593279288'),
-                Book(title='Flask Web Development', author='Miguel Grinberg', year=2018, isbn='978-1491991732'),
-                Book(title='Clean Code', author='Robert C. Martin', year=2008, isbn='978-0132350884'),
-            ]
-            db.session.add_all(sample_books)
-            db.session.commit()
-            print('Sample books added!')
+        # if Book.query.count() == 0:
+        #     sample_books = [
+        #         Book(title='Python Crash Course', author='Eric Matthes', year=2019, isbn='978-1593279288'),
+        #         Book(title='Flask Web Development', author='Miguel Grinberg', year=2018, isbn='978-1491991732'),
+        #         Book(title='Clean Code', author='Robert C. Martin', year=2008, isbn='978-0132350884'),
+        #     ]
+        #     db.session.add_all(sample_books)
+        #     db.session.commit()
+        #     print('Sample books added!')
 
 
 if __name__ == '__main__':
