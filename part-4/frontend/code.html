@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Library Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: #0f172a;
+      color: #e5e7eb;
+      font-family: system-ui, sans-serif;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #020617;
+      height: 100vh;
+      position: fixed;
+      padding: 20px;
+      border-right: 1px solid #1e293b;
+    }
+
+    .sidebar h3 {
+      color: #38bdf8;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
+    .sidebar button {
+      width: 100%;
+      margin-bottom: 10px;
+      background: #020617;
+      border: 1px solid #1e293b;
+      color: #e5e7eb;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: left;
+    }
+
+    .sidebar button:hover {
+      background: #1e293b;
+    }
+
+    .main {
+      margin-left: 250px;
+      padding: 30px;
+    }
+
+    .topbar {
+      background: #020617;
+      padding: 15px 25px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 14px;
+      color: #e5e7eb;
+    }
+
+    .form-control, .form-select {
+      background: #020617;
+      color: white;
+      border: 1px solid #1e293b;
+    }
+
+    .form-control::placeholder {
+      color: #64748b;
+    }
+
+    table {
+      color: white;
+    }
+
+    thead {
+      background: #020617;
+    }
+
+    tbody tr:hover {
+      background: #1e293b;
+    }
+
+    .btn-primary {
+      background: #38bdf8;
+      border: none;
+      color: black;
+      font-weight: bold;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      border: none;
+    }
+
+    .btn-warning {
+      background: #facc15;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h3>📚 Library</h3>
+    <button onclick="showSection('author-section')">👤 Authors</button>
+    <button onclick="showSection('book-section')">📘 Books</button>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <h4>Admin Dashboard</h4>
+      <input type="text" class="form-control w-25" placeholder="Search...">
+    </div>
+
+    <!-- AUTHORS -->
+    <div id="author-section">
+      <div class="card p-4 mb-4">
+        <h5>Add Author</h5>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <input class="form-control" id="auth-name" placeholder="Name">
+          </div>
+          <div class="col-md-4">
+            <input class="form-control" id="auth-city" placeholder="City">
+          </div>
+          <div class="col-md-4">
+            <input class="form-control" id="auth-bio" placeholder="Bio">
+          </div>
+        </div>
+        <button class="btn btn-primary mt-3" onclick="addAuthor()">Add Author</button>
+      </div>
+
+      <div class="card p-4">
+        <h5>Authors List</h5>
+        <table class="table table-dark table-hover mt-3">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>City</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="author-list"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BOOKS -->
+    <div id="book-section" class="d-none">
+      <div class="card p-4 mb-4">
+        <h5>Add Book</h5>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <input class="form-control" id="book-title" placeholder="Title">
+          </div>
+          <div class="col-md-4">
+            <select class="form-select" id="book-author-id"></select>
+          </div>
+          <div class="col-md-4">
+            <input class="form-control" id="book-year" placeholder="Year">
+          </div>
+          <div class="col-md-4">
+            <input class="form-control" id="book-isbn" placeholder="ISBN">
+          </div>
+          <div class="col-md-4">
+            <input class="form-control" id="book-category" placeholder="Category">
+          </div>
+        </div>
+        <button class="btn btn-primary mt-3" onclick="addBook()">Add Book</button>
+      </div>
+
+      <div class="card p-4">
+        <h5>Books List</h5>
+        <table class="table table-dark table-hover mt-3">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Year</th>
+              <th>Category</th>
+              <th>ISBN</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="book-list"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function showSection(id) {
+      document.getElementById("author-section").classList.add("d-none");
+      document.getElementById("book-section").classList.add("d-none");
+      document.getElementById(id).classList.remove("d-none");
+    }
+  </script>
+
+  <script src="code.js"></script>
+
+</body>
+</html>
