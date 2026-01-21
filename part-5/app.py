@@ -20,10 +20,12 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv  # Load .env file
 
 # Load environment variables from .env file
-load_dotenv()
+load_dotenv()#Loads .env file values into system memory.
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'fallback-secret-key')  # Get from env or use fallback
+#If SECRET_KEY exists → use it
+#Else → use fallbac
 
 # =============================================================================
 # DATABASE CONFIGURATION
@@ -31,6 +33,11 @@ app.secret_key = os.getenv('SECRET_KEY', 'fallback-secret-key')  # Get from env 
 
 # Get database URL from environment variable
 # Falls back to SQLite if not set
+#If env variable exists → use PostgreSQL/MySQL
+#Else → fallback to SQLite
+
+#This is called graceful fallback.
+
 DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///default.db')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
@@ -38,7 +45,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Connection pool settings (for production)
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    'pool_size': 10,  # Number of connections to keep open
+    'pool_size': 10,  # Number of connections to keep open 
     'pool_recycle': 3600,  # Recycle connections after 1 hour
     'pool_pre_ping': True,  # Check connection validity before using
 }
