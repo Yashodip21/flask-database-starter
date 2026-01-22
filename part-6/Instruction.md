@@ -3,6 +3,7 @@
 ## Activity Description
 
 Build a **Product Inventory** application where you can:
+
 - View all products in a table
 - Add new products (name, quantity, price)
 - Delete products from inventory
@@ -15,11 +16,11 @@ This homework combines everything you learned in Parts 1-5.
 
 ### 1. Create 3 Routes in app.py
 
-| Route           | Method       | What it does                       |
-|-----------------|--------------|------------------------------------|
-| `/`             | GET          | Show all products in a table       |
-| `/add`          | GET, POST    | Show form + save new product       |
-| `/delete/<id>`  | GET          | Delete product and go back to home |
+| Route          | Method    | What it does                       |
+| -------------- | --------- | ---------------------------------- |
+| `/`            | GET       | Show all products in a table       |
+| `/add`         | GET, POST | Show form + save new product       |
+| `/delete/<id>` | GET       | Delete product and go back to home |
 
 ### 2. Create Templates Folder
 
@@ -37,6 +38,7 @@ part-6/
 ## Step-by-Step Guide
 
 ### Step 1: Create templates folder
+
 ```bash
 mkdir templates
 ```
@@ -44,6 +46,7 @@ mkdir templates
 ### Step 2: Create index.html (Home Page)
 
 This page should show:
+
 - A heading "Product Inventory"
 - A link/button to go to `/add` page
 - A table with columns: ID, Name, Quantity, Price, Action
@@ -52,6 +55,7 @@ This page should show:
 ### Step 3: Create add.html (Add Product Form)
 
 This page should have:
+
 - A heading "Add New Product"
 - A form with 3 input fields: name, quantity, price
 - A submit button
@@ -66,6 +70,7 @@ Write the 3 routes in the section marked "Your code here..."
 ## Hints
 
 ### Hint 1: Home Route (`/`)
+
 ```python
 @app.route('/')
 def index():
@@ -74,6 +79,7 @@ def index():
 ```
 
 ### Hint 2: Add Route (`/add`)
+
 ```python
 @app.route('/add', methods=['GET', 'POST'])
 def add_product():
@@ -92,6 +98,7 @@ def add_product():
 ```
 
 ### Hint 3: Delete Route (`/delete/<id>`)
+
 ```python
 @app.route('/delete/<int:id>')
 def delete_product(id):
@@ -102,64 +109,66 @@ def delete_product(id):
 ```
 
 ### Hint 4: HTML Table (index.html)
+
 ```html
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Product Inventory</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Product Inventory</h1>
     <a href="/add">+ Add Product</a>
 
     <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Action</th>
-        </tr>
-        {% for product in products %}
-        <tr>
-            <td>{{ product.id }}</td>
-            <td>{{ product.name }}</td>
-            <td>{{ product.quantity }}</td>
-            <td>${{ product.price }}</td>
-            <td><a href="/delete/{{ product.id }}">Delete</a></td>
-        </tr>
-        {% endfor %}
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Action</th>
+      </tr>
+      {% for product in products %}
+      <tr>
+        <td>{{ product.id }}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.quantity }}</td>
+        <td>${{ product.price }}</td>
+        <td><a href="/delete/{{ product.id }}">Delete</a></td>
+      </tr>
+      {% endfor %}
     </table>
-</body>
+  </body>
 </html>
 ```
 
 ### Hint 5: HTML Form (add.html)
+
 ```html
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Add Product</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Add New Product</h1>
 
     <form method="POST">
-        <label>Name:</label><br>
-        <input type="text" name="name" required><br><br>
+      <label>Name:</label><br />
+      <input type="text" name="name" required /><br /><br />
 
-        <label>Quantity:</label><br>
-        <input type="number" name="quantity" required><br><br>
+      <label>Quantity:</label><br />
+      <input type="number" name="quantity" required /><br /><br />
 
-        <label>Price:</label><br>
-        <input type="number" name="price" step="0.01" required><br><br>
+      <label>Price:</label><br />
+      <input type="number" name="price" step="0.01" required /><br /><br />
 
-        <button type="submit">Add Product</button>
+      <button type="submit">Add Product</button>
     </form>
 
-    <br>
-    <a href="/">← Back to Home</a>
-</body>
+    <br />
+    <button><a href="/">Back to Home</a></button>
+  </body>
 </html>
 ```
 
